@@ -1,22 +1,21 @@
 const express = require('express');
-const auth = require('../middleware/tokenCheck');
+const tokenCheck = require('../middleware/tokenCheck');
 const router = express.Router();
-
+const multer = require('../middleware/multerConfig');
 const booksCtrl = require('../controllers/booksCtrl');
-const bookCtrl = require('../controllers/bookCtrl');
 
-router.post('/', auth, booksCtrl.createBook);
+router.post('/', tokenCheck, multer, booksCtrl.createBook);
 
-router.post('/:id/rating', auth, bookCtrl.postRating);
+router.post('/:id/rating', tokenCheck, multer, bookCtrl.postRating);
 
 router.get('/', booksCtrl.getBooks);
 
-router.get('/:id', bookCtrl.getBook);
+router.get('/:id', booksCtrl.getOneBook);
 
 router.get('/bestrating', booksCtrl.bestRated);
 
-router.put('/:id', auth, bookCtrl.editBook);
+router.put('/:id', tokenCheck, booksCtrl.editBook);
 
-router.delete('/:id', auth, bookCtrl.deleteBook);
+router.delete('/:id', tokenCheck, booksCtrl.deleteBook);
 
 module.exports = router;
