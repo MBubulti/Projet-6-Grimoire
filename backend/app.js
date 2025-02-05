@@ -2,7 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const app = express();
-const postSignUp = require('./routes/post/signUp');
+const authRoutes = require('./routes/auth');
+const booksRoutes = require('./routes/books');
 const uri = process.env.uri;
 
 mongoose
@@ -11,10 +12,10 @@ mongoose
   .catch((err) => console.error('Erreur MongoDB:', err));
 
 app.use(express.json()); // Pour traiter le JSON
-app.use('/api/auth');
+app.use('/api/auth', authRoutes);
+app.use('/api/books', booksRoutes);
 
 const Book = require('./models/Book');
-const User = require('./models/User');
 
 //Routes POST
 //Routes Login
