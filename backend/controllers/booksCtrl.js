@@ -34,7 +34,20 @@ exports.getOneBook = (req, res, next) => {
     .catch((error) => res.status(400).json({error}));
 };
 
-//Get Best Rated exports.bestRated = (req, res, next);
+//Get Best Rated
+exports.bestRated = async (req, res, next) => {
+  try {
+    const bestRatedBooks = await Book.find().sort({averageRating: -1}).limit(3);
+
+    if (bestRatedBooks.length > 0) {
+      return res.status(200).json(bestRatedBooks);
+    }
+    return res.status(404).json({error: 'pas de livres notés'});
+  } catch (error) {
+    console.error('Erreur dans le contrôleur bestRated:', error);
+    next(error);
+  }
+};
 
 //Post Rating
 exports.postRating = async (req, res, next) => {

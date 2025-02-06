@@ -3,7 +3,6 @@ const router = express.Router();
 const tokenCheck = require('../middleware/tokenCheck');
 const multer = require('../middleware/multerConfig');
 const checkRated = require('../middleware/checkrated');
-
 const booksCtrl = require('../controllers/booksCtrl');
 
 router.post(
@@ -18,9 +17,9 @@ router.post('/:id/rating', tokenCheck, checkRated, booksCtrl.postRating);
 
 router.get('/', booksCtrl.getBooks);
 
-router.get('/:id', booksCtrl.getOneBook);
+router.get('/bestrating', booksCtrl.bestRated);
 
-//router.get('/bestrating', booksCtrl.bestRated);
+router.get('/:id', booksCtrl.getOneBook);
 
 router.put(
   '/:id',
