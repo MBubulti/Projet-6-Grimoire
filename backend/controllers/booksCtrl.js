@@ -8,7 +8,7 @@ exports.createBook = (req, res, next) => {
   const book = new Book({
     ...bookObject,
     userId: req.auth.userId,
-    imageURL: `${req.protocol}://${req.get('host')}/images/${
+    imageUrl: `${req.protocol}://${req.get('host')}/images/${
       req.file.filename
     }`,
   });
@@ -66,7 +66,7 @@ exports.deleteBook = (req, res, next) => {
       if (book.userId != req.auth.userId) {
         res.status(401).json({message: 'Requête non-autorisée'});
       } else {
-        const filename = book.imageURL.split('/images/')[1];
+        const filename = book.imageUrl.split('/images/')[1];
         fs.unlink(`/images/${filename}`, () => {
           Book.deleteOne({_id: req.params.id})
             .then(() => res.status(200).json({message: 'Livre supprimé'}))
