@@ -1,16 +1,16 @@
 const Book = require('../models/Book');
 const fs = require('fs');
+const path = require('path');
 
-exports.createBook = (req, res, next) => {
+exports.createBook = (req, res) => {
   const bookObject = JSON.parse(req.body.book);
   delete bookObject._id;
   delete bookObject._userId;
+
   const book = new Book({
     ...bookObject,
     userId: req.auth.userId,
-    imageUrl: `${req.protocol}://${req.get('host')}/images/${
-      req.file.filename
-    }`,
+    imageUrl: `${req.protocol}://${req.get('host')}${req.file.path}`,
   });
 
   book
@@ -37,7 +37,7 @@ exports.editBook = (req, res, next) => {
   const bookObject = req.file
     ? {
         ...JSON.parse(req.body.book),
-        imageURL: `${req.protocol}://${req.get('host')}/images/${
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${
           req.file.filename
         }`,
       }
@@ -67,7 +67,8 @@ exports.deleteBook = (req, res, next) => {
         res.status(401).json({message: 'Requête non-autorisée'});
       } else {
         const filename = book.imageUrl.split('/images/')[1];
-        fs.unlink(`/images/${filename}`, () => {
+        const filePath = path.join(__dirname, '../images', filename);
+        fs.unlink(filePath, () => {
           Book.deleteOne({_id: req.params.id})
             .then(() => res.status(200).json({message: 'Livre supprimé'}))
             .catch((error) => res.status(400).json({error}));

@@ -19,21 +19,4 @@ app.use('/api/auth', authRoutes);
 app.use('/api/books', booksRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-//Routes book Rating
-//app.post('/api/books/:id/rating', (req, res) => {
-//res.send('Route Rating');
-//});
-
-//Routes Best Rated Books
-//app.get('/api/books/bestrating', (req, res) => {
-//res.send('Route bestRated');
-//});
-
-// Route DELETE
-//app.delete('/api/books/:id', (req, res) => {
-//Book.deleteOne({_id: req.params.id})
-//.then(() => res.status(200).json({message: 'Livre supprimé'}))
-//.catch((error) => res.status(400).json({error}));
-//});
-
 module.exports = app;

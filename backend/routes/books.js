@@ -1,12 +1,18 @@
 const express = require('express');
 const tokenCheck = require('../middleware/tokenCheck');
-const router = express.Router();
 const multer = require('../middleware/multerConfig');
+const router = express.Router();
 const booksCtrl = require('../controllers/booksCtrl');
 
-router.post('/', tokenCheck, multer, booksCtrl.createBook);
+router.post(
+  '/',
+  tokenCheck,
+  multer.upload.single('image'),
+  multer.uploadImg,
+  booksCtrl.createBook
+);
 
-//router.post('/:id/rating', tokenCheck, multer, booksCtrl.postRating);
+//router.post('/:id/rating', tokenCheck, booksCtrl.postRating);
 
 router.get('/', booksCtrl.getBooks);
 
