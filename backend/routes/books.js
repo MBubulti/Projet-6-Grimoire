@@ -1,7 +1,9 @@
 const express = require('express');
+const router = express.Router();
 const tokenCheck = require('../middleware/tokenCheck');
 const multer = require('../middleware/multerConfig');
-const router = express.Router();
+const checkRated = require('../middleware/checkrated');
+
 const booksCtrl = require('../controllers/booksCtrl');
 
 router.post(
@@ -12,7 +14,7 @@ router.post(
   booksCtrl.createBook
 );
 
-//router.post('/:id/rating', tokenCheck, booksCtrl.postRating);
+router.post('/:id/rating', tokenCheck, checkRated, booksCtrl.postRating);
 
 router.get('/', booksCtrl.getBooks);
 

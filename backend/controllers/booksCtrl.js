@@ -2,6 +2,7 @@ const Book = require('../models/Book');
 const fs = require('fs');
 const path = require('path');
 
+//Post Create Book
 exports.createBook = (req, res) => {
   const bookObject = JSON.parse(req.body.book);
   delete bookObject._id;
@@ -19,20 +20,52 @@ exports.createBook = (req, res) => {
     .catch((error) => res.status(400).json({error}));
 };
 
+//Get Books
 exports.getBooks = (req, res, next) => {
   Book.find()
     .then((books) => res.status(200).json(books))
     .catch((error) => res.status(400).json({error}));
 };
 
+//Get Book
 exports.getOneBook = (req, res, next) => {
   Book.findOne({_id: req.params.id})
     .then((book) => res.status(200).json(book))
     .catch((error) => res.status(400).json({error}));
 };
 
-//exports.bestRated = (req, res, next);
+//Get Best Rated exports.bestRated = (req, res, next);
 
+//Post Rating
+exports.postRating = async (req, res, next) => {
+  const userId = req.auth.userId;
+  const grade = req.body.rating;
+  if (grade < 0 || grade > 5) {
+    return res.status(400).json({message: 'La note doit être entre 0 & 5'});
+  }
+  try {
+    const book = await Book.findById(req.params.id);
+    if (!book) {
+      return res.status(404).json({message: 'Book not found'});
+    }
+
+    book.ratings.push({userId, grade});
+
+    const totalGrade = book.ratings.reduce(
+      (sum, rating) => sum + rating.grade,
+      0
+    );
+    const averageGrade =
+      book.ratings.length > 0 ? totalGrade / book.ratings.length : 0;
+    book.averageRating = averageGrade;
+    await book.save();
+    return res.status(200).json(book);
+  } catch (error) {
+    return res.status(500).json({error});
+  }
+};
+
+//Put Edit Book
 exports.editBook = (req, res, next) => {
   const bookObject = req.file
     ? {
@@ -55,11 +88,9 @@ exports.editBook = (req, res, next) => {
 
         fs.unlink(oldFilePath, (err) => {
           if (err) {
-            return res
-              .status(500)
-              .json({
-                error: "Erreur lors de la suppression de l'ancienne image.",
-              });
+            return res.status(500).json({
+              error: "Erreur lors de la suppression de l'ancienne image.",
+            });
           }
         });
       }
@@ -70,6 +101,7 @@ exports.editBook = (req, res, next) => {
     .catch((error) => res.status(400).json({error}));
 };
 
+//Delete Book
 exports.deleteBook = (req, res, next) => {
   Book.findOne({_id: req.params.id})
     .then((book) => {
