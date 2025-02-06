@@ -20,7 +20,13 @@ router.get('/:id', booksCtrl.getOneBook);
 
 //router.get('/bestrating', booksCtrl.bestRated);
 
-router.put('/:id', tokenCheck, booksCtrl.editBook);
+router.put(
+  '/:id',
+  tokenCheck,
+  multer.upload.single('image'),
+  multer.uploadImg,
+  booksCtrl.editBook
+);
 
 router.delete('/:id', tokenCheck, booksCtrl.deleteBook);
 

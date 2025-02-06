@@ -48,14 +48,24 @@ exports.editBook = (req, res, next) => {
     .then((book) => {
       if (book.userId != req.auth.userId) {
         res.status(401).json({message: 'Requête non-autorisée'});
-      } else {
-        Book.updateOne(
-          {_id: req.params.id},
-          {...bookObject, _id: req.params.id}
-        )
-          .then(() => res.status(200).json({message: 'Mise à jour du livre'}))
-          .catch((error) => res.status(400).json(error));
       }
+      if (req.file) {
+        const oldFileName = book.imageUrl.split('/images/')[1];
+        const oldFilePath = path.join(__dirname, '../images', oldFileName);
+
+        fs.unlink(oldFilePath, (err) => {
+          if (err) {
+            return res
+              .status(500)
+              .json({
+                error: "Erreur lors de la suppression de l'ancienne image.",
+              });
+          }
+        });
+      }
+      Book.updateOne({_id: req.params.id}, {...bookObject, _id: req.params.id})
+        .then(() => res.status(200).json({message: 'Mise à jour du livre'}))
+        .catch((error) => res.status(400).json({error}));
     })
     .catch((error) => res.status(400).json({error}));
 };
