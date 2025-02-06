@@ -1,7 +1,6 @@
-const User = require('../../models/User');
+const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const {emit} = require('../app');
 
 exports.signUp = (req, res, next) => {
   bcrypt
@@ -14,14 +13,13 @@ exports.signUp = (req, res, next) => {
         .catch((error) => res.status(400).json({error}));
     })
     .catch((error) => res.status(500).json({error}));
-  next();
 };
 
 exports.login = (req, res) => {
   User.findOne({email: req.body.email})
     .then((user) => {
       if (!user) {
-        res
+        return res
           .status(401)
           .json({message: 'Identifiant ou mot de passe incorrect'});
       }
@@ -29,7 +27,7 @@ exports.login = (req, res) => {
         .compare(req.body.password, user.password)
         .then((valid) => {
           if (!valid) {
-            res
+            return res
               .status(401)
               .json({message: 'Identifiant ou mot de passe incorrect'});
           }

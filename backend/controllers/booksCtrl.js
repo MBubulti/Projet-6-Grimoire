@@ -31,7 +31,7 @@ exports.getOneBook = (req, res, next) => {
     .catch((error) => res.status(400).json({error}));
 };
 
-exports.bestRated = (req, res, next);
+//exports.bestRated = (req, res, next);
 
 exports.editBook = (req, res, next) => {
   const bookObject = req.file
