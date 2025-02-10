@@ -7,7 +7,7 @@ const checkRated = async (req, res, next) => {
   try {
     const book = await Book.findById(bookId);
     if (!book) {
-      return res.status(404).json({message: 'Book not found'});
+      return res.status(404).json({message: 'Livre non trouvé'});
     }
     const isRated = book.ratings.find(
       (rating) => rating.userId.toString() === userId.toString()

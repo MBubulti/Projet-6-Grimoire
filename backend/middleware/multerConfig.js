@@ -1,5 +1,6 @@
 const multer = require('multer');
 const sharp = require('sharp');
+const crypto = require('crypto');
 const path = require('path');
 const fs = require('fs');
 
@@ -22,13 +23,20 @@ if (!fs.existsSync(imagesDir)) {
 const uploadImg = async (req, res, next) => {
   try {
     if (!req.file) {
-      return res.status(400).json({error: 'No file uploaded'});
+      return res.status(400).json({error: 'Pas de fichier'});
     }
 
     const {buffer, originalname} = req.file;
 
-    const timestamp = new Date().toISOString().replace(/:/g, '-');
-    const ref = `${timestamp}-${originalname.split('.')[0]}.webp`;
+    if (!MIME_TYPES[req.file.mimetype]) {
+      return res.status(400).json({error: 'Fichier invalide'});
+    }
+
+    const hash = crypto
+      .createHash('sha1')
+      .update(crypto.randomBytes(12))
+      .digest('hex');
+    const ref = `${hash}.webp`;
     const filePath = path.join(imagesDir, ref);
 
     await sharp(buffer).webp({quality: 20}).toFile(filePath);

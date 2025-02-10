@@ -5,6 +5,12 @@ const multer = require('../middleware/multerConfig');
 const checkRated = require('../middleware/checkrated');
 const booksCtrl = require('../controllers/booksCtrl');
 
+router.get('/', booksCtrl.getBooks);
+
+router.get('/bestrating', booksCtrl.bestRated);
+
+router.get('/:id', booksCtrl.getOneBook);
+
 router.post(
   '/',
   tokenCheck,
@@ -14,12 +20,6 @@ router.post(
 );
 
 router.post('/:id/rating', tokenCheck, checkRated, booksCtrl.postRating);
-
-router.get('/', booksCtrl.getBooks);
-
-router.get('/bestrating', booksCtrl.bestRated);
-
-router.get('/:id', booksCtrl.getOneBook);
 
 router.put(
   '/:id',
